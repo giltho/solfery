@@ -1,0 +1,6 @@
+(library
+    (name MusicLib)
+    (preprocess (pps brisk-reconciler.ppx))
+    (libraries
+        bigarray
+        Revery))

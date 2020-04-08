@@ -1,0 +1,1 @@
+MusicLibTest.TestFramework.cli();

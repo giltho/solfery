@@ -7,7 +7,9 @@
     (libraries
         bigarray
         Revery
-            ))
+        MusicLib
+            )
+    (flags -open MusicLib))
 
 (install
     (section bin)
