@@ -1,48 +1,40 @@
 {
-  "name": "revery-quick-start",
-  "version": "1.3.0",
-  "description": "Revery quickstart",
+  "name": "solfery",
+  "version": "0.0.0",
+  "description": "Playing with solfege and revery",
   "license": "MIT",
   "scripts": {
-   "format": "bash -c \"refmt --in-place *.re\"",
-   "run": "esy x App"
+    "format": "bash -c \"refmt --in-place bin/*.re lib/*.re test/lib/*.re\"",
+    "run": "esy x App",
+    "test": "dune exec test/lib/RunTests.exe"
   },
   "esy": {
     "build": "refmterr dune build -p App",
     "buildsInSource": "_build",
-    "install": [
-      "esy-installer App.install"
-    ]
+    "install": [ "esy-installer App.install" ]
   },
   "revery-packager": {
-    "bundleName": "ExampleApp",
-    "bundleId": "com.example.app",
-    "displayName": "Revery Example App",
+    "bundleName": "Solfery",
+    "bundleId": "com.giltho.solfery",
+    "displayName": "Solfery",
     "mainExecutable": "App",
-    "windows": {
-      "packages": ["zip"],
-      "iconFile": "assets/icon.ico"
-    },
+    "windows": { "packages": [ "zip" ], "iconFile": "assets/icon.ico" },
     "darwin": {
-      "packages": ["tar", "dmg"],
+      "packages": [ "tar", "dmg" ],
       "iconFile": "assets/icon.icns"
     },
-    "linux": {
-      "packages": ["tar", "appimage"]
-    }
+    "linux": { "packages": [ "tar", "appimage" ] }
   },
   "dependencies": {
-    "revery": "revery-ui/revery#3c23304",
     "@opam/dune": "*",
-    "timber": "1.0.0",
-    "esy-macdylibbundler": "*"
+    "esy-macdylibbundler": "*",
+    "revery": "revery-ui/revery#3c23304",
+    "timber": "1.0.0"
   },
   "resolutions": {
     "@opam/cmdliner": "1.0.2",
     "esy-cmake": "prometheansacrifice/esy-cmake#2a47392def755"
   },
-  "devDependencies": {
-    "ocaml": "~4.8.0",
-    "@opam/merlin": "*"
-  }
+  "devDependencies": { "ocaml": "~4.8.0", "@opam/merlin": "*", 
+    "@reason-native/rely": "^3.2.1" }
 }
