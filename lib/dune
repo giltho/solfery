@@ -1,5 +1,6 @@
 (library
     (name MusicLib)
+    (flags -w -14)
     (preprocess (pps brisk-reconciler.ppx))
     (libraries
         bigarray

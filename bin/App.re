@@ -17,11 +17,24 @@ let main = () => {
       right(0),
     ];
 
-    let inner = [flexDirection(`Row), alignItems(`FlexEnd)];
+    let staff = [paddingVertical(10)];
   };
 
   <View style=Styles.container>
-    <StaffDisplay width=500. height=200. clef=Treble note=Solfege.Note.fa(4) />
+    <StaffDisplay
+      style=Styles.staff
+      width=800.
+      height=200.
+      clef=Treble
+      note={Solfege.Note.sol(4)}
+    />
+    <StaffDisplay
+      style=Styles.staff
+      width=800.
+      height=200.
+      clef=Bass
+      note={Solfege.Note.fa(3)}
+    />
   </View>;
 };
 

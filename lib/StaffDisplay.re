@@ -7,6 +7,18 @@ open Solfege;
 let black = Skia.Color.makeArgb(0xFFl, 0x00l, 0x00l, 0x00l);
 let blue = Skia.Color.makeArgb(0xFFl, 0x00l, 0x00l, 0xFFl);
 let red = Skia.Color.makeArgb(0xFFl, 0xFFl, 0x00l, 0x00l);
+let grey = Skia.Color.makeArgb(0x30l, 0x00l, 0x00l, 0x00l);
+
+module DisplayableNote = {
+  type t = {
+    note: Note.t,
+    focus: bool,
+  };
+
+  let make = (~focus=false, ~note: Note.t, ()) => {
+    {note, focus};
+  };
+};
 
 module Engine = {
   /**
@@ -72,122 +84,153 @@ module Engine = {
     *. float_of_int(distFromRef)
     +. nthLayerStartY(~height, refLayer);
   };
-};
 
-let noteCircle = (~width: float, ~height: float, ~clef: Clef.t, note: Note.t) => {
-  let noteCenterX = width /. 2.;
-  let noteCenterY = Engine.noteCenterY(~height, ~clef, note);
-  let noteRadius = Engine.layerSize(height) /. 2.;
-  (noteCenterX, noteCenterY, noteRadius);
-};
-
-let drawClef =
-  (
-    ~width: float,
-    ~height: float,
-    clef: Clef.t,
-    canvasContext: CanvasContext.t
-  ) => {
-    let x0 = 100.;
-    let (_, y0, r) = noteCircle(~width, ~height, ~clef, Note.sol(4));
-
-    let clefFont = MusicFont.ofClef(clef);
-
-    let (fontSize, x, y) =
-      MusicFont.howToDrawAround(
-        Engine.layerSize(height),
-        clefFont,
-        x0,
-        y0
+  let limit = (~height: float, ~width: float) => {
+    /* We take the treble key as a reference to make sure everything is aligned */
+    let sz =
+      MusicFont.fontSize(
+        ~layerSize=layerSize(height),
+        ~fontData=MusicFont.treble,
       );
+    let width = MusicFont.treble.width *. sz;
+    width *. 4.;
+  };
+};
 
+module Drawing = {
+  let drawSymb =
+      (
+        ~height: float,
+        ~fontData: MusicFont.t,
+        ~focus=false,
+        x0: float,
+        y0: float,
+        canvasContext: CanvasContext.t,
+      ) => {
+    let (fontSize, x, y) =
+      MusicFont.howToDrawAround(Engine.layerSize(height), fontData, x0, y0);
     let paint = Skia.Paint.make();
+
+    if (focus) {
+      let paint = Skia.Paint.make();
+      Skia.Paint.setColor(paint, grey);
+
+      let fw = fontSize *. fontData.width;
+
+      CanvasContext.drawRectLtwh(
+        ~left=x0 -. 0.6 *. fw,
+        ~top=0.,
+        ~width=fw *. 1.2,
+        ~height,
+        ~paint,
+        canvasContext,
+      );
+    };
+
     Skia.Paint.setColor(paint, black);
     let tf = MusicFont.typeface;
     Skia.Paint.setTypeface(paint, tf);
     Skia.Paint.setTextSize(paint, fontSize);
-    CanvasContext.drawText(~paint, ~x, ~y, ~text=clefFont.str, canvasContext);
+    CanvasContext.drawText(~paint, ~x, ~y, ~text=fontData.str, canvasContext);
+  };
 
-    let placeHolderFill = Skia.Paint.make();
-    Skia.Paint.setColor(placeHolderFill, red);
-    CanvasContext.drawRectLtwh(
-      ~top=y0 -. r /. 2.,
-      ~left=x0 -. r /. 2.,
-      ~width=r,
-      ~height=r,
-      ~paint=placeHolderFill,
+  let drawClef =
+      (
+        ~width: float,
+        ~height: float,
+        clef: Clef.t,
+        canvasContext: CanvasContext.t,
+      ) => {
+    let (correspondingNote, _) = Clef.noteOnLine(clef);
+    let y0 = Engine.noteCenterY(~height, ~clef, correspondingNote);
+    let clefFont = MusicFont.ofClef(clef);
+    let x0 =
+      clefFont.width
+      *. MusicFont.fontSize(
+           ~layerSize=Engine.layerSize(height),
+           ~fontData=clefFont,
+         );
+    drawSymb(~height, ~fontData=clefFont, x0, y0, canvasContext);
+  };
+
+  let drawNoteAtX =
+      (
+        ~width: float,
+        ~height: float,
+        ~clef: Clef.t,
+        canvasContext: CanvasContext.t,
+        note: DisplayableNote.t,
+        x0: float,
+      ) => {
+    let y0 = Engine.noteCenterY(~height, ~clef, note.note);
+    drawSymb(
+      ~height,
+      ~fontData=MusicFont.quarter,
+      ~focus=note.focus,
+      x0,
+      y0,
       canvasContext,
     );
   };
 
-let drawNote =
-    (
-      ~width: float,
-      ~height: float,
-      ~clef: Clef.t,
-      canvasContext: CanvasContext.t,
-      note: Note.t,
-    ) => {
-  let (x0, y0, r) = noteCircle(~width, ~height, ~clef, note);
-  let (fontSize, x, y) =
-    MusicFont.howToDrawAround(
-      Engine.layerSize(height),
-      MusicFont.quarter,
-      x0,
-      y0,
-    );
-  let paint = Skia.Paint.make();
-  Skia.Paint.setColor(paint, black);
-  let tf = MusicFont.typeface;
-  Skia.Paint.setTypeface(paint, tf);
-  Skia.Paint.setTextSize(paint, fontSize);
-  CanvasContext.drawText(~paint, ~x, ~y, ~text=MusicFont.quarter.str, canvasContext);
+  let drawVisibleLines =
+      (~width: float, ~height: float, canvasContext: CanvasContext.t) => {
+    let nthLineRect = (~width: float, ~height: float, n: int) => {
+      let (a, b, c, d) = Engine.rectOfVisibleLine(~width, ~height, n);
+      Skia.Rect.makeLtrb(a, b, c, d);
+    };
 
-  let placeHolderFill = Skia.Paint.make();
-  Skia.Paint.setColor(placeHolderFill, red);
-  CanvasContext.drawRectLtwh(
-    ~top=y0 -. r /. 2.,
-    ~left=x0 -. r /. 2.,
-    ~width=r,
-    ~height=r,
-    ~paint=placeHolderFill,
-    canvasContext,
-  );
-};
+    let paint = Skia.Paint.make();
+    Skia.Paint.setColor(paint, black);
 
-let nthLineRect = (~width: float, ~height: float, n: int) => {
-  let (a, b, c, d) = Engine.rectOfVisibleLine(~width, ~height, n);
-  Skia.Rect.makeLtrb(a, b, c, d);
-};
+    for (n in 0 to 4) {
+      let rect = nthLineRect(~width, ~height, n);
+      CanvasContext.drawRect(~rect, ~paint, canvasContext);
+    };
+  };
 
-let drawVisibleLines =
-    (~width: float, ~height: float, canvasContext: CanvasContext.t) => {
-  let paint = Skia.Paint.make();
-  Skia.Paint.setColor(paint, black);
+  let drawLimit =
+      (~width: float, ~height: float, canvasContext: CanvasContext.t) => {
+    let limit = Engine.limit(~height, ~width);
+    let rect = Skia.Rect.makeLtrb(limit, 0., limit +. 1., height);
 
-  for (n in 0 to 4) {
-    let rect = nthLineRect(~width, ~height, n);
+    let paint = Skia.Paint.make();
+    Skia.Paint.setColor(paint, grey);
     CanvasContext.drawRect(~rect, ~paint, canvasContext);
   };
 };
 
-let make = (~width: float, ~height: float, ~clef: Clef.t, ~note: Note.t, ()) => {
+let make =
+    (
+      ~style=Style.emptyViewStyle,
+      ~width: float,
+      ~height: float,
+      ~clef: Clef.t,
+      ~note: Note.t,
+      (),
+    ) => {
   let w_int = int_of_float(width);
   let h_int = int_of_float(height);
-  let drawVisibleLines = drawVisibleLines(~width, ~height);
-  let drawNote = drawNote(~width, ~height, ~clef);
-  let drawClef = drawClef(~width, ~height, clef);
+  let drawVisibleLines = Drawing.drawVisibleLines(~width, ~height);
+  let drawNoteAtX = Drawing.drawNoteAtX(~width, ~height, ~clef);
+  let drawClef = Drawing.drawClef(~width, ~height, clef);
+  let drawLimit = Drawing.drawLimit(~width, ~height);
 
-  let canvas_style =
+  let canvasStyle =
     Style.[width(w_int), height(h_int), backgroundColor(Colors.white)];
 
-  <View>
+  <View style>
     <Canvas
-      style=canvas_style
+      style=canvasStyle
       render={canvasContext => {
         drawVisibleLines(canvasContext);
         drawClef(canvasContext);
-        drawNote(canvasContext, note);
+        drawLimit(canvasContext);
+        drawNoteAtX(
+          canvasContext,
+          DisplayableNote.make(~focus=false, ~note, ()),
+          width /. 2.,
+        );
       }}
     />
   </View>;

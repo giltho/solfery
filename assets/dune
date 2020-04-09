@@ -1,4 +1,4 @@
 (install
     (section bin)
     (package App)
-    (files Roboto-Regular.ttf Metdemo.ttf))
+    (files Roboto-Regular.ttf Bravura.otf))
