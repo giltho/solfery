@@ -4,7 +4,7 @@
   "description": "Playing with solfege and revery",
   "license": "MIT",
   "scripts": {
-    "format": "bash -c \"refmt --in-place bin/*.re lib/*.re test/lib/*.re\"",
+    "format": "bash ./scripts/format.sh",
     "run": "esy x App",
     "test": "dune exec test/lib/RunTests.exe"
   },
