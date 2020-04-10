@@ -20,20 +20,21 @@ let main = () => {
     let staff = [paddingVertical(10)];
   };
 
-  <View style=Styles.container>
+  <View
+    style=Styles.container
     /* <StaffDisplay
-      style=Styles.staff
-      width=800.
-      height=200.
-      clef=Treble
-    />
-    <StaffDisplay
-      style=Styles.staff
-      width=800.
-      height=200.
-      clef=Bass
-    /> */
-  </View>;
+         style=Styles.staff
+         width=800.
+         height=200.
+         clef=Treble
+       />
+       <StaffDisplay
+         style=Styles.staff
+         width=800.
+         height=200.
+         clef=Bass
+       /> */
+  />;
 };
 
 let init = app => {

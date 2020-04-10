@@ -1,5 +1,6 @@
 (library
     (name Drawing)
+    (public_name Solfery.Solfery_Drawing)
     (libraries
         Revery
         Solfege

@@ -1,1 +1,1 @@
-MusicLibTest.TestFramework.cli();
+SolferyTest.TestFramework.cli();

@@ -1,5 +1,6 @@
 (library
     (name Solfery)
+    (public_name Solfery)
     (libraries
         Solfege
         Drawing

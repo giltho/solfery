@@ -1,7 +1,7 @@
 open TestFramework;
-open MusicLib;
+open Solfery;
 
-describe("Testing the Solfege Library", ({test, _}) => {
+describe("Solfege", ({test, _}) => {
   test("toInt(do(0)) should be 0", ({expect, _}) => {
     Solfege.Note.(expect.int(toInt(do_(0))).toBe(0))
   });

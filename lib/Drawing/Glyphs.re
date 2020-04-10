@@ -1,61 +1,69 @@
-let fontFile = "Bravura.otf";
+
+let ($) = (o, p) => {
+  switch (o) {
+  | `Assoc(l) => List.assoc(p, l)
+  | _ => failwith("Not an object")
+  }
+};
 
 let metadataFile = "bravura_metadata.json"
 
-let font =
-  switch (Revery.Font.load(fontFile)) {
-  | Ok(f) => f
-  | Error(m) => failwith(m)
-  };
+module Font = {
+  let file = "Bravura.otf"
+  let absolute = Revery.Environment.getAssetPath(file)
+  let font = 
+  switch (Revery.Font.load(file)) {
+    | Ok(f) => f
+    | Error(m) => failwith(m)
+    };
+  let typeface = Revery.Font.getSkiaTypeface(font);
+}
 
-let typeface = Revery.Font.getSkiaTypeface(font);
+module Name = {
+  type t = string
+  let noteheadBlack = "noteheadBlack"
+  let cClef = "cClef"
+  let fClef = "fClef"
+  let gClef = "gClef"
+};
 
-let glyphNameFile = "glyphnames.json";
+module Text = {
+  let glyphNamesFile = "glyphnames.json";
 
-let ($) = (o, p) =>
-  switch (o) {
-  | `Assoc(l) =>
-    switch (List.find_opt(((s, _)) => String.equal(s, p), l)) {
-    | Some((_, x)) => Some(x)
-    | None => None
-    }
-  | _ => None
-  };
-
-let ($?) = (o, p) =>
-  switch (o) {
-  | Some(o) => o $ p
-  | None => None
-  };
-
-let glyphNames = 
-
-let glyphNames = Yojson.Safe.from_file(Revery.Environment.getAssetPath(glyphNameFile));
-
-let textFromGlyphNames = names => {
-  open Yojson.Safe;
-
-  let ucharOfName = (name) => {
-    let codepoint =
-      switch (glyphNames $ name $? "codepoint") {
-      | Some(`String(x)) => x
-      | _ => failwith("Could not retrieve glyph with name " ++ name)
-      };
-    
-    /* Codepoint has U+xxx form, we need a number */
+  let fromCodePoint = (codepoint) => {
     let codepoint = String.sub(codepoint, 2, String.length(codepoint) - 2);
     let codepoint = int_of_string("0x" ++ codepoint);
-    Uchar.of_int(codepoint)
-  };
-  let b = Buffer.create(100);
-  List.iter(Buffer.add_utf_8_uchar(b), List.map(ucharOfName, names));
-  Buffer.contents(b);
-};
+    let b = Buffer.create(5);
+    Buffer.add_utf_8_uchar(b, Uchar.of_int(codepoint));
+    Buffer.contents(b);
+  }
 
+  /* Populate the hashtable */
+  let hash : Hashtbl.t(Name.t, string) = {
+    let hash =  Hashtbl.create(3000);
+    let data = Yojson.Safe.from_file(Revery.Environment.getAssetPath(glyphNamesFile));
+    let data = switch(data) {
+    | `Assoc l => l
+    | _ => failwith("Wrong glyphnames.json file")
+    };
 
-module GlyphNames = {
-  let noteheadBlack = "noteheadBlack"
-};
+    let addDataToHash = ((name, o)) => {
+      let codepoint = switch(o $ "codepoint") {
+      | `String c => c
+      | codepoint => failwith("Invalid Codepoint: " ++ (Yojson.Safe.to_string(codepoint)));
+      };
+      let text = fromCodePoint(codepoint);
+      Hashtbl.add(hash, name, text);
+    }
+
+    List.iter(addDataToHash, data);
+    hash
+  }
+
+  Console.log(hash)
+
+  let get = Hashtbl.find(hash)
+}
 
 module BBox = {
 
@@ -79,8 +87,23 @@ module BBox = {
     }
   }
 
-  let fromName
-};
+  let hash : Hashtbl.t(Name.t, t) = {
+    let hash = Hashtbl.create(3000);
+    let data = Yojson.Safe.from_file(Revery.Environment.getAssetPath(metadataFile));
+    let data = switch(data $ "glyphBBoxes") {
+    | `Assoc(l) => l
+    | _ => failwith("Invalid metadata file, impossible to get glyphBBoxes");
+    };
+
+    let addDataToHash = ((name, o)) => 
+      Hashtbl.add(hash, name, of_yojson(o));
+    
+    List.iter(addDataToHash, data);
+    hash
+  }
+
+  let get = Hashtbl.find(hash);
+}
 
 type t = {
   name: string,
@@ -89,9 +112,10 @@ type t = {
   scale: float
 }
 
-let make = (name: string) => {
-  let text = textFromGlyphNames([name]);
-  let bbox = 
+let make = (name) => {
+  let text = Text.get(name);
+              let bbox = BBox.get(name);
+
 }
 
-let noteheadBlack = textFromGlyphNames([GlyphNames.noteheadBlack]);
+/* let noteheadBlack = textFromGlyphNames([Name.noteheadBlack]); */

@@ -1,5 +1,6 @@
 (library
     (name Components)
+    (public_name Solfery.Solfery_Components)
     (preprocess (pps brisk-reconciler.ppx))
     (libraries
         Revery))

@@ -1,2 +1,3 @@
 (library
-    (name Solfege))
+    (name Solfege)
+    (public_name Solfery.Solfery_Solfege))
