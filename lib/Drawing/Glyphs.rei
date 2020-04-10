@@ -26,7 +26,7 @@ module Text : {
   let get : Name.t => string
 };
 
-module BBox : {
+module Box : {
   type coord = {
     x: float,
     y: float
@@ -37,14 +37,18 @@ module BBox : {
     ne: coord
   };
 
-  let get : Name.t => t
+  let getBBox : Name.t => t
 }
 
 type t = {
   name: string,
   text: string,
-  bbox: BBox.t,
-  scale: float
+  bbox: Box.t,
 }
 
 let make : Name.t => t;
+
+let noteheadBlack : t;
+let gClef : t;
+let cClef : t;
+let fClef : t;

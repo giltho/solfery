@@ -5,7 +5,8 @@
     (js_of_ocaml (javascript_files stubs.js))
     (public_name App)
     (libraries
-        Revery))
+        Revery
+        Solfery))
 
 (install
     (section bin)

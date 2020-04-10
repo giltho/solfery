@@ -63,12 +63,10 @@ module Text = {
     hash;
   };
 
-  Console.log(hash);
-
   let get = Hashtbl.find(hash);
 };
 
-module BBox = {
+module Box = {
   type coord = {
     x: float,
     y: float,
@@ -85,11 +83,11 @@ module BBox = {
         ("bBoxNE", `List([`Float(xne), `Float(yne)])),
         ("bBoxSW", `List([`Float(xsw), `Float(ysw)])),
       ]) => {
-        sw: {
+        ne: {
           x: xne,
           y: yne,
         },
-        ne: {
+        sw: {
           x: xsw,
           y: ysw,
         },
@@ -98,7 +96,7 @@ module BBox = {
     };
   };
 
-  let hash: Hashtbl.t(Name.t, t) = {
+  let hashBBox: Hashtbl.t(Name.t, t) = {
     let hash = Hashtbl.create(3000);
     let data =
       Yojson.Safe.from_file(Revery.Environment.getAssetPath(metadataFile));
@@ -115,24 +113,23 @@ module BBox = {
     hash;
   };
 
-  let get = Hashtbl.find(hash);
+  let getBBox = Hashtbl.find(hashBBox);
 };
 
 type t = {
   name: string,
   text: string,
-  bbox: BBox.t,
-  scale: float,
+  bbox: Box.t,
 };
 
 let make = name => {
   let text = Text.get(name);
-  let bbox = BBox.get(name);
-  let height = bbox.ne.y -. bbox.sw.y;
-  let scale = 1. /. height;
-  {
-    name, text, bbox, scale
-  }
+  let bbox = Box.getBBox(name);
+  {name, text, bbox};
 };
 
-/* let noteheadBlack = textFromGlyphNames([Name.noteheadBlack]); */
+let noteheadBlack = make(Name.noteheadBlack);
+
+let cClef = make(Name.cClef);
+let fClef = make(Name.fClef);
+let gClef = make(Name.gClef);

@@ -9,7 +9,7 @@
     "test": "dune exec test/lib/RunTests.exe"
   },
   "esy": {
-    "build": "refmterr dune build -p App",
+    "build": "refmterr dune build bin/App.exe",
     "buildsInSource": "_build",
     "install": [ "esy-installer App.install" ]
   },

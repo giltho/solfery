@@ -1,7 +1,6 @@
 open Revery;
 open Revery.UI;
-open Revery.UI.Components;
-open Revery.Draw;
+open Solfery.Components;
 
 let main = () => {
   module Styles = {
@@ -20,21 +19,20 @@ let main = () => {
     let staff = [paddingVertical(10)];
   };
 
-  <View
-    style=Styles.container
-    /* <StaffDisplay
-         style=Styles.staff
-         width=800.
-         height=200.
-         clef=Treble
-       />
-       <StaffDisplay
-         style=Styles.staff
-         width=800.
-         height=200.
-         clef=Bass
-       /> */
-  />;
+  <View style=Styles.container>
+    <Staff
+      style=Styles.staff
+      width=800.
+      height=200.
+      clef=Treble
+    />
+    <Staff
+      style=Styles.staff
+      width=800.
+      height=200.
+      clef=Bass
+    />
+  </View>;
 };
 
 let init = app => {

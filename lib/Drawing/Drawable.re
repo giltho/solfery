@@ -1,5 +1,6 @@
-module type S = {
-  type t;
-
-  let draw: (t, Revery.Draw.CanvasContext.t) => unit;
+type t('a) = {
+  content: 'a,
+  draw: StaffContext.t => unit,
 };
+
+let draw = (cs, x) => x.draw(cs);

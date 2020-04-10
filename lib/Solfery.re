@@ -1,3 +1,3 @@
 module Drawing = Drawing;
 module Solfege = Solfege;
-module Compontents = Components;
+module Components = Components;
