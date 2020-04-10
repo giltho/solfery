@@ -1,4 +1,8 @@
 (install
     (section bin)
     (package App)
-    (files Roboto-Regular.ttf Bravura.otf))
+    (files
+        Roboto-Regular.ttf
+        Bravura.otf
+        glyphnames.json
+        bravura_metadata.json))

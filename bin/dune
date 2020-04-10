@@ -7,9 +7,9 @@
     (libraries
         bigarray
         Revery
-        MusicLib
+        Solfery
             )
-    (flags -open MusicLib))
+    (flags -open Solfery))
 
 (install
     (section bin)

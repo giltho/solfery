@@ -206,7 +206,8 @@ let make =
       ~width: float,
       ~height: float,
       ~clef: Clef.t,
-      ~note: Note.t,
+      /* ~note: Note.t, */
+      ~children=React.empty,
       (),
     ) => {
   let w_int = int_of_float(width);
@@ -217,7 +218,21 @@ let make =
   let drawLimit = Drawing.drawLimit(~width, ~height);
 
   let canvasStyle =
-    Style.[width(w_int), height(h_int), backgroundColor(Colors.white)];
+    Style.[
+      width(w_int),
+      height(h_int),
+      backgroundColor(Colors.white),
+      ];
+  
+  let noteStyle =
+    Style.[
+      fontSize(30.),
+      position(`Absolute),
+      left(20),
+      top(100),
+      fontFamily(MusicFont.fontFile),
+      color(Revery.Color.rgb(0., 0., 0.))
+    ];
 
   <View style>
     <Canvas
@@ -226,12 +241,9 @@ let make =
         drawVisibleLines(canvasContext);
         drawClef(canvasContext);
         drawLimit(canvasContext);
-        drawNoteAtX(
-          canvasContext,
-          DisplayableNote.make(~focus=false, ~note, ()),
-          width /. 2.,
-        );
       }}
     />
+    <Revery.UI.Text
+      style=noteStyle text="Bite"/>
   </View>;
 };

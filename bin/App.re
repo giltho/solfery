@@ -21,20 +21,18 @@ let main = () => {
   };
 
   <View style=Styles.container>
-    <StaffDisplay
+    /* <StaffDisplay
       style=Styles.staff
       width=800.
       height=200.
       clef=Treble
-      note={Solfege.Note.sol(4)}
     />
     <StaffDisplay
       style=Styles.staff
       width=800.
       height=200.
       clef=Bass
-      note={Solfege.Note.fa(3)}
-    />
+    /> */
   </View>;
 };
 

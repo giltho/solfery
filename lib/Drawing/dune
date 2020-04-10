@@ -1,0 +1,6 @@
+(library
+    (name Drawing)
+    (libraries
+        Revery
+        Solfege
+        yojson))
