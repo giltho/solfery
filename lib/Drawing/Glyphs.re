@@ -128,7 +128,11 @@ type t = {
 let make = name => {
   let text = Text.get(name);
   let bbox = BBox.get(name);
-  ();
+  let height = bbox.ne.y -. bbox.sw.y;
+  let scale = 1. /. height;
+  {
+    name, text, bbox, scale
+  }
 };
 
 /* let noteheadBlack = textFromGlyphNames([Name.noteheadBlack]); */

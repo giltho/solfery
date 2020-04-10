@@ -46,3 +46,5 @@ type t = {
   bbox: BBox.t,
   scale: float
 }
+
+let make : Name.t => t;
