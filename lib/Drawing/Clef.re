@@ -11,9 +11,14 @@ let draw = (clef, sc) => {
   Skia.Paint.setTextSize(paint, StaffContext.lineSpacing(sc) *. clef.scale);
   Skia.Paint.setColor(paint, Coloring.black);
   let (_, l) = Solfege.Clef.noteOnLine(clef.clef);
-  let center = StaffContext.nthLineY(sc, StaffContext.lineOfVisibleLine(l));
-  StaffContext.Draw.drawText(~paint, ~x=clef.x, ~y=center, ~text=clef.glyph.text, sc);
-  DebugBox.makeAndDraw(~x=clef.x, ~y=center, ~rad=5., sc);
+  let y = StaffContext.nthLineY(sc, StaffContext.lineOfVisibleLine(l));
+  StaffContext.Draw.drawText(
+    ~paint,
+    ~x=clef.x,
+    ~y,
+    ~text=clef.glyph.text,
+    sc,
+  );
 };
 
 let glyphAndScaleOfClef = (clef: Solfege.Clef.t) => {
@@ -26,5 +31,6 @@ let glyphAndScaleOfClef = (clef: Solfege.Clef.t) => {
 
 let make = (~clef: Solfege.Clef.t, ~x: float) => {
   let (glyph, scale) = glyphAndScaleOfClef(clef);
-  {glyph, clef, x, scale};
+  let content = {glyph, clef, x, scale};
+  {Drawable.content, draw: draw(content)};
 };

@@ -26,24 +26,21 @@ module Text : {
   let get : Name.t => string
 };
 
-module Box : {
-  type coord = {
+module Coord : {
+  type t = {
     x: float,
     y: float
   };
 
-  type t = {
-    sw: coord,
-    ne: coord
-  };
-
-  let getBBox : Name.t => t
+  let getBBoxSW : Name.t => t;
+  let getBBoxNE : Name.t => t;
+  let getStemUpSE : Name.t => t;
+  let getStemDownNW : Name.t => t;
 }
 
 type t = {
-  name: string,
+  name: Name.t,
   text: string,
-  bbox: Box.t,
 }
 
 let make : Name.t => t;

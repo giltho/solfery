@@ -63,12 +63,18 @@ let lineOfVisibleLine = (n: int) => {
   /** This should be computed from nLineSpace */ n + 4;
 };
 
+let nthVisibleLineY = (context: t, n: int) =>
+  nthLineY(context, lineOfVisibleLine(n));
+
 module Draw = {
   open Revery.Draw;
 
   let drawRect = staffContext =>
     CanvasContext.drawRect(staffContext.canvasContext);
 
-  let drawText (~x, ~y, ~paint, ~text) = staffContext =>
+  let drawText = (~x, ~y, ~paint, ~text, staffContext) =>
     CanvasContext.drawText(~x, ~y, ~paint, ~text, staffContext.canvasContext);
+
+  let drawPath = (~path, ~paint, staffContext) =>
+    CanvasContext.drawPath(~path, ~paint, staffContext.canvasContext);
 };

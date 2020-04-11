@@ -1,9 +1,11 @@
-let ($) = (o, p) => {
+let ($?) = (o, p) => {
   switch (o) {
-  | `Assoc(l) => List.assoc(p, l)
-  | _ => failwith("Not an object")
+  | `Assoc(l) => List.assoc_opt(p, l)
+  | _ => None
   };
 };
+
+let ($) = (o, p) => Option.get(o $? p);
 
 let metadataFile = "bravura_metadata.json";
 
@@ -66,66 +68,82 @@ module Text = {
   let get = Hashtbl.find(hash);
 };
 
-module Box = {
-  type coord = {
+module Coord = {
+  type t = {
     x: float,
     y: float,
   };
 
-  type t = {
-    sw: coord,
-    ne: coord,
-  };
-
-  let of_yojson = (j: Yojson.Safe.t) => {
+  let ofYojson = j => {
     switch (j) {
-    | `Assoc([
-        ("bBoxNE", `List([`Float(xne), `Float(yne)])),
-        ("bBoxSW", `List([`Float(xsw), `Float(ysw)])),
-      ]) => {
-        ne: {
-          x: xne,
-          y: yne,
-        },
-        sw: {
-          x: xsw,
-          y: ysw,
-        },
-      }
-    | _ => failwith("Wrong Bbox: " ++ Yojson.Safe.pretty_to_string(j))
+    | `List([`Float(x), `Float(y)]) => {x, y}
+    | _ => failwith("Wrong coordinates")
     };
   };
 
-  let hashBBox: Hashtbl.t(Name.t, t) = {
-    let hash = Hashtbl.create(3000);
+  let (hashBBoxSW, hashBBoxNE, hashStemUpSE, hashStemDownNW) = {
+    let hashBBoxSW = Hashtbl.create(100);
+    let hashBBoxNE = Hashtbl.create(100);
+
+    let hashStemUpSE = Hashtbl.create(100);
+    let hashStemDownNW = Hashtbl.create(100);
+
     let data =
       Yojson.Safe.from_file(Revery.Environment.getAssetPath(metadataFile));
-    let data =
+    let dataBBox =
       switch (data $ "glyphBBoxes") {
       | `Assoc(l) => l
       | _ => failwith("Invalid metadata file, impossible to get glyphBBoxes")
       };
 
-    let addDataToHash = ((name, o)) =>
-      Hashtbl.add(hash, name, of_yojson(o));
+    let f = ((name, o)) => {
+      let bBoxNE = ofYojson(o $ "bBoxNE");
+      let bBoxSW = ofYojson(o $ "bBoxSW");
+      Hashtbl.add(hashBBoxNE, name, bBoxNE);
+      Hashtbl.add(hashBBoxSW, name, bBoxSW);
+    };
 
-    List.iter(addDataToHash, data);
-    hash;
+    List.iter(f, dataBBox);
+
+    let dataAnchor =
+      switch (data $ "glyphsWithAnchors") {
+      | `Assoc(l) => l
+      | _ =>
+        failwith("Invalid metadata file, impossible to get glyphsAnchors")
+      };
+
+    let f = ((name, o)) => {
+      o
+      $? "stemUpSE"
+      |> Option.map(ofYojson)
+      |> Option.iter(Hashtbl.add(hashStemUpSE, name));
+
+      o
+      $? "stemDownNW"
+      |> Option.map(ofYojson)
+      |> Option.iter(Hashtbl.add(hashStemDownNW, name));
+    };
+
+    List.iter(f, dataAnchor);
+
+    (hashBBoxSW, hashBBoxNE, hashStemUpSE, hashStemDownNW);
   };
 
-  let getBBox = Hashtbl.find(hashBBox);
+  let getBBoxSW = Hashtbl.find(hashBBoxSW);
+  let getBBoxNE = Hashtbl.find(hashBBoxNE);
+
+  let getStemUpSE = Hashtbl.find(hashStemUpSE);
+  let getStemDownNW = Hashtbl.find(hashStemDownNW);
 };
 
 type t = {
   name: string,
   text: string,
-  bbox: Box.t,
 };
 
 let make = name => {
   let text = Text.get(name);
-  let bbox = Box.getBBox(name);
-  {name, text, bbox};
+  {name, text};
 };
 
 let noteheadBlack = make(Name.noteheadBlack);

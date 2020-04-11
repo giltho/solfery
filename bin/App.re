@@ -20,18 +20,7 @@ let main = () => {
   };
 
   <View style=Styles.container>
-    <Staff
-      style=Styles.staff
-      width=800.
-      height=200.
-      clef=Treble
-    />
-    <Staff
-      style=Styles.staff
-      width=800.
-      height=200.
-      clef=Bass
-    />
+    <Staff style=Styles.staff width=800. height=200. clef=Treble />
   </View>;
 };
 

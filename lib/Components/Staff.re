@@ -1,13 +1,7 @@
 open Revery;
 open Revery.UI;
 /* open Revery.UI.Components; */
-open Revery.Draw;
 open Drawing;
-
-let black = Skia.Color.makeArgb(0xFFl, 0x00l, 0x00l, 0x00l);
-let blue = Skia.Color.makeArgb(0xFFl, 0x00l, 0x00l, 0xFFl);
-let red = Skia.Color.makeArgb(0xFFl, 0xFFl, 0x00l, 0x00l);
-let grey = Skia.Color.makeArgb(0x30l, 0x00l, 0x00l, 0x00l);
 
 /* module Engine = {
      /**
@@ -86,91 +80,18 @@ let grey = Skia.Color.makeArgb(0x30l, 0x00l, 0x00l, 0x00l);
      };
    }; */
 
-module Drawing = {
-  /* let drawSymb =
-         (
-           ~height: float,
-           ~fontData: MusicFont.t,
-           ~focus=false,
-           x0: float,
-           y0: float,
-           canvasContext: CanvasContext.t,
-         ) => {
-       let (fontSize, x, y) =
-         MusicFont.howToDrawAround(Engine.layerSize(height), fontData, x0, y0);
-       let paint = Skia.Paint.make();
+/* module Drawing = {
 
-       if (focus) {
-         let paint = Skia.Paint.make();
-         Skia.Paint.setColor(paint, grey);
+     let drawLimit =
+            (~width: float, ~height: float, canvasContext: CanvasContext.t) => {
+          let limit = Engine.limit(~height, ~width);
+          let rect = Skia.Rect.makeLtrb(limit, 0., limit +. 1., height);
 
-         let fw = fontSize *. fontData.width;
-
-         CanvasContext.drawRectLtwh(
-           ~left=x0 -. 0.6 *. fw,
-           ~top=0.,
-           ~width=fw *. 1.2,
-           ~height,
-           ~paint,
-           canvasContext,
-         );
-       };
-
-       Skia.Paint.setColor(paint, black);
-       let tf = MusicFont.typeface;
-       Skia.Paint.setTypeface(paint, tf);
-       Skia.Paint.setTextSize(paint, fontSize);
-       CanvasContext.drawText(~paint, ~x, ~y, ~text=fontData.str, canvasContext);
-     };
-
-     let drawClef =
-         (
-           ~width: float,
-           ~height: float,
-           clef: Clef.t,
-           canvasContext: CanvasContext.t,
-         ) => {
-       let (correspondingNote, _) = Clef.noteOnLine(clef);
-       let y0 = Engine.noteCenterY(~height, ~clef, correspondingNote);
-       let clefFont = MusicFont.ofClef(clef);
-       let x0 =
-         clefFont.width
-         *. MusicFont.fontSize(
-              ~layerSize=Engine.layerSize(height),
-              ~fontData=clefFont,
-            );
-       drawSymb(~height, ~fontData=clefFont, x0, y0, canvasContext);
-     };
-
-     let drawNoteAtX =
-         (
-           ~width: float,
-           ~height: float,
-           ~clef: Clef.t,
-           canvasContext: CanvasContext.t,
-           note: DisplayableNote.t,
-           x0: float,
-         ) => {
-       let y0 = Engine.noteCenterY(~height, ~clef, note.note);
-       drawSymb(
-         ~height,
-         ~fontData=MusicFont.quarter,
-         ~focus=note.focus,
-         x0,
-         y0,
-         canvasContext,
-       );
-     }; */
-  /* let drawLimit =
-         (~width: float, ~height: float, canvasContext: CanvasContext.t) => {
-       let limit = Engine.limit(~height, ~width);
-       let rect = Skia.Rect.makeLtrb(limit, 0., limit +. 1., height);
-
-       let paint = Skia.Paint.make();
-       Skia.Paint.setColor(paint, grey);
-       CanvasContext.drawRect(~rect, ~paint, canvasContext);
-     }; */
-};
+          let paint = Skia.Paint.make();
+          Skia.Paint.setColor(paint, grey);
+          CanvasContext.drawRect(~rect, ~paint, canvasContext);
+        };
+   }; */
 
 let make =
     (
@@ -197,9 +118,15 @@ let make =
       style=canvasStyle
       render={canvasContext => {
         let staffContext = makeContext(~canvasContext);
-        StaffLines.draw(staffContext);
-        let drawableClef = Clef.make(~clef, ~x=100.);
-        Clef.draw(drawableClef, staffContext);
+        let draw = x => Drawable.draw(staffContext, x);
+        draw(StaffLines.make());
+
+        let drawableClef = Clef.make(~clef, ~x=10.);
+        draw(drawableClef);
+
+        let note = Solfege.Note.sol(4);
+        let note = Note.make(~clef, ~note, ~x=225., ());
+        draw(note);
       }}
     />
   </View>;

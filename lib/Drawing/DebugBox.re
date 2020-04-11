@@ -1,15 +1,15 @@
-open Revery.Draw
+open Revery.Draw;
 
 type t = {
   x: float,
   y: float,
   rad: float,
-  color: Skia.Color.t
-}
+  color: Skia.Color.t,
+};
 
 let make = (~x, ~y, ~rad, ~color=Coloring.blue, ()) => {
-  {x, y, rad, color}
-}
+  {x, y, rad, color};
+};
 
 let draw = (db, sc) => {
   let xStart = db.x -. db.rad;
@@ -20,9 +20,9 @@ let draw = (db, sc) => {
   let paint = Skia.Paint.make();
   Skia.Paint.setColor(paint, db.color);
   StaffContext.Draw.drawRect(~rect, ~paint, sc);
-} 
+};
 
 let makeAndDraw = (~x, ~y, ~rad, ~color=Coloring.blue, sc) => {
   let db = make(~x, ~y, ~rad, ~color, ());
   draw(db, sc);
-}
+};
