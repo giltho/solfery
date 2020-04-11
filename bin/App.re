@@ -1,6 +1,11 @@
 open Revery;
 open Revery.UI;
-open Solfery.Components;
+module Components =
+  Solfery.Components.WithFixedOptions.Make({
+    let width = 800.;
+    let height = 200.;
+    let clef = Solfege.Clef.Treble;
+  });
 
 let main = () => {
   module Styles = {
@@ -18,13 +23,14 @@ let main = () => {
 
     let staff = [paddingVertical(10)];
   };
-
-  <View style=Styles.container>
-    <Staff style=Styles.staff width=800. height=200. clef=Treble >
-      <Note clef=Treble note=Solfege.Note.sol(4) x=200. width=800. height=200./>
-      <Note clef=Treble note=Solfege.Note.si(4) x=200. width=800. height=200./>
-    </Staff>
-  </View>;
+  Components.(
+    <View style=Styles.container>
+      <Staff style=Styles.staff>
+        <Note note={Solfege.Note.sol(4)} x=200. />
+        <Note note={Solfege.Note.si(4)} x=200. />
+      </Staff>
+    </View>
+  );
 };
 
 let init = app => {

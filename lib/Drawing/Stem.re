@@ -9,7 +9,7 @@ let rectOfStemDown = (stem, x, y, sc) => {
   let l = nw.x *. lsp;
   let r = l +. 2.;
   let t = -. nw.y *. lsp;
-  let b = t +. 3.5 *. lsp +. (sc.StaffContext.lineHeight);
+  let b = t +. 3.5 *. lsp +. sc.StaffContext.lineHeight;
   Skia.Rect.makeLtrb(x +. l, y +. t, x +. r, y +. b);
 };
 
@@ -19,7 +19,7 @@ let rectOfStemUp = (stem, x, y, sc) => {
   let r = se.x *. lsp;
   let l = r -. 2.;
   let b = -. se.y *. lsp;
-  let t = b -. 3.5 *. lsp +. (sc.StaffContext.lineHeight);
+  let t = b -. 3.5 *. lsp +. sc.StaffContext.lineHeight;
   Skia.Rect.makeLtrb(x +. l, y +. t, x +. r, y +. b);
 };
 
