@@ -20,7 +20,10 @@ let main = () => {
   };
 
   <View style=Styles.container>
-    <Staff style=Styles.staff width=800. height=200. clef=Treble />
+    <Staff style=Styles.staff width=800. height=200. clef=Treble >
+      <Note clef=Treble note=Solfege.Note.sol(4) x=200. width=800. height=200./>
+      <Note clef=Treble note=Solfege.Note.si(4) x=200. width=800. height=200./>
+    </Staff>
   </View>;
 };
 
