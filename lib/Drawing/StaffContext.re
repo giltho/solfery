@@ -23,7 +23,7 @@ type t = {
   width: float,
   lineHeight: float,
   nLineSpace: int,
-  canvasContext: Revery.Draw.CanvasContext.t,
+  canvasContext: option(Revery.Draw.CanvasContext.t),
 };
 
 let make =
@@ -35,11 +35,27 @@ let make =
   {
     height,
     width,
-    canvasContext,
+    canvasContext: Some(canvasContext),
     lineHeight: defaultLineHeight,
     nLineSpace: defaultNLineSpace,
   };
 };
+
+let dummy = (~height: float, ~width: float) => {
+  {
+    height,
+    width,
+    lineHeight: defaultLineHeight,
+    nLineSpace: defaultNLineSpace,
+    canvasContext: None,
+  };
+};
+
+let lineHeight = context => context.lineHeight;
+
+let height = context => context.height;
+
+let width = context => context.width;
 
 /**
  * Actual number of pixels between the center of two visible lines.
@@ -66,15 +82,26 @@ let lineOfVisibleLine = (n: int) => {
 let nthVisibleLineY = (context: t, n: int) =>
   nthLineY(context, lineOfVisibleLine(n));
 
+let isDummy = sc => Option.is_none(sc.canvasContext);
+
 module Draw = {
   open Revery.Draw;
 
-  let drawRect = staffContext =>
-    CanvasContext.drawRect(staffContext.canvasContext);
+  let drawRect = (~paint, ~rect, staffContext) =>
+    Option.iter(
+      sc => CanvasContext.drawRect(~paint, ~rect, sc),
+      staffContext.canvasContext,
+    );
 
   let drawText = (~x, ~y, ~paint, ~text, staffContext) =>
-    CanvasContext.drawText(~x, ~y, ~paint, ~text, staffContext.canvasContext);
+    Option.iter(
+      sc => CanvasContext.drawText(~x, ~y, ~paint, ~text, sc),
+      staffContext.canvasContext,
+    );
 
   let drawPath = (~path, ~paint, staffContext) =>
-    CanvasContext.drawPath(~path, ~paint, staffContext.canvasContext);
+    Option.iter(
+      sc => CanvasContext.drawPath(~path, ~paint, sc),
+      staffContext.canvasContext,
+    );
 };

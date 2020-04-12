@@ -7,6 +7,7 @@ type t = {
   clef: Clef.t,
   scale: float,
   x: float,
+  color: Skia.Color.t,
 };
 
 let centerY = (notehead: t, sc: StaffContext.t) => {
@@ -26,7 +27,7 @@ let draw = (notehead, sc) => {
     paint,
     StaffContext.lineSpacing(sc) *. notehead.scale,
   );
-  Skia.Paint.setColor(paint, Coloring.black);
+  Skia.Paint.setColor(paint, notehead.color);
   let y = centerY(notehead, sc);
   StaffContext.Draw.drawText(
     ~paint,
@@ -37,9 +38,9 @@ let draw = (notehead, sc) => {
   );
 };
 
-let make = (~clef, ~note, ~x, ()) => {
+let make = (~clef, ~note, ~x, ~color=Coloring.black, ()) => {
   let scale = 4.;
-  let content = {glyph: Glyphs.noteheadBlack, note, clef, x, scale};
+  let content = {glyph: Glyphs.noteheadBlack, note, clef, x, scale, color};
   let draw = draw(content);
   {Drawable.content, draw};
 };
