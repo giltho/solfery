@@ -16,6 +16,11 @@ let defaultNLineSpace = 12;
 let defaultLineHeight = 3.;
 
 /**
+ * By default, the clef is drawn 10px from the left.
+ */
+let defaultXClef = 10.;
+
+/**
  * This should be enough to draw anything.
  */
 type t = {
@@ -23,6 +28,7 @@ type t = {
   width: float,
   lineHeight: float,
   nLineSpace: int,
+  xClef: float,
   canvasContext: option(Revery.Draw.CanvasContext.t),
 };
 
@@ -38,6 +44,7 @@ let make =
     canvasContext: Some(canvasContext),
     lineHeight: defaultLineHeight,
     nLineSpace: defaultNLineSpace,
+    xClef: defaultXClef,
   };
 };
 
@@ -47,6 +54,7 @@ let dummy = (~height: float, ~width: float) => {
     width,
     lineHeight: defaultLineHeight,
     nLineSpace: defaultNLineSpace,
+    xClef: defaultXClef,
     canvasContext: None,
   };
 };
@@ -56,6 +64,8 @@ let lineHeight = context => context.lineHeight;
 let height = context => context.height;
 
 let width = context => context.width;
+
+let xClef = context => context.xClef;
 
 /**
  * Actual number of pixels between the center of two visible lines.
@@ -83,6 +93,18 @@ let nthVisibleLineY = (context: t, n: int) =>
   nthLineY(context, lineOfVisibleLine(n));
 
 let isDummy = sc => Option.is_none(sc.canvasContext);
+
+let glyphBoxRect = (~glyph: Glyphs.t, ~x: float, ~y: float, context: t) => {
+  let name = glyph.name;
+  let ls = lineSpacing(context);
+  let Glyphs.Coord.{x: lBox, y: bBox} = Glyphs.Coord.getBBoxSW(name);
+  let Glyphs.Coord.{x: rBox, y: tBox} = Glyphs.Coord.getBBoxNE(name);
+  let xMin = x +. lBox *. ls;
+  let xMax = x +. rBox *. ls;
+  let yMin = y -. tBox *. ls;
+  let yMax = y -. bBox *. ls;
+  (xMin, yMin, xMax, yMax);
+};
 
 module Draw = {
   open Revery.Draw;

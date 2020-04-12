@@ -14,14 +14,14 @@ let drawFocus = (xMin, xMax, sc: StaffContext.t) => {
 let draw = (gn: t, sc) => {
   if (gn.focus) {
     let head = gn.note.content.head.content;
-    let headGlyphName = head.glyph.name;
-    let ls = StaffContext.lineSpacing(sc);
-    let headX = head.x;
-    let lBox = Glyphs.Coord.getBBoxSW(headGlyphName).x;
-    let rBox = Glyphs.Coord.getBBoxNE(headGlyphName).x;
-    let xMin = headX +. lBox *. ls -. 3.;
-    let xMax = headX +. rBox *. ls +. 3.;
-    drawFocus(xMin, xMax, sc);
+    let (xMin, _, xMax, _) =
+      StaffContext.glyphBoxRect(
+        ~glyph=head.glyph,
+        ~x=head.x,
+        ~y=0. /* We don't really care here */,
+        sc,
+      );
+    drawFocus(xMin -. 3., xMax +. 3., sc);
   };
   gn.note.draw(sc);
 };

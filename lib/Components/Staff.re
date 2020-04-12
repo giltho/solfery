@@ -21,7 +21,14 @@ let make =
   <View style>
     <View style=canvasStyle>
       <StaffLines width height />
-      <Clef width height clef x=10. />
+      <Clef
+        width
+        height
+        clef
+        x={Drawing.StaffContext.xClef(
+          Drawing.StaffContext.dummy(~width, ~height),
+        )}
+      />
       children
     </View>
   </View>;

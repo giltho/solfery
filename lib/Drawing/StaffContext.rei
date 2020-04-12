@@ -15,11 +15,15 @@ let height : t => float
 
 let width : t => float;
 
+let xClef : t => float;
+
 let nthLineY : (t,  int) => float;
 
 let lineOfVisibleLine : int => int;
 
 let nthVisibleLineY : (t, int) => float;
+
+let glyphBoxRect : (~glyph: Glyphs.t, ~x: float, ~y: float, t) => (float, float, float, float);
 
 module Draw : {
   open Revery.Draw.Skia;
