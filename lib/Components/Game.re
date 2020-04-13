@@ -148,9 +148,27 @@ module KeyboardInput = {
       dispatch(Focused(true));
     };
 
-    let respondToKeys = (_: NodeEvents.keyEventParams) => {
-      parentDispatch(State.Guess(Solfege.Note.Do));
+    let letterD = 100;
+    let letterR = 114;
+    let letterM = 109;
+    let letterF = 102;
+    let letterS = 115;
+    let letterL = 108;
+    let letterI = 105;
+
+    let respondToKeys = (e: NodeEvents.keyEventParams) => {
+        switch (e.keycode) {
+        | v when v === letterD => parentDispatch(State.Guess(Do))
+        | v when v === letterR => parentDispatch(State.Guess(Re))
+        | v when v === letterM => parentDispatch(State.Guess(Mi))
+        | v when v === letterF => parentDispatch(State.Guess(Fa))
+        | v when v === letterS => parentDispatch(State.Guess(Sol))
+        | v when v === letterL => parentDispatch(State.Guess(La))
+        | v when v === letterI => parentDispatch(State.Guess(Si))
+        | _ => ()
+        }
     };
+
 
     <View
       ref={r => dispatch(SetRef(r))}
