@@ -27,6 +27,19 @@ module Note = {
     };
   };
 
+  let pureOfInt = n => {
+    switch (n) {
+    | 0 => Do
+    | 1 => Re
+    | 2 => Mi
+    | 3 => Fa
+    | 4 => Sol
+    | 5 => La
+    | 6 => Si
+    | _ => raise(Invalid_argument("Invalid int for pure note"));
+    }
+  }
+
   type t = {
     note: pure,
     octave: int,
@@ -52,7 +65,14 @@ module Note = {
   /**
    * `toInt(do_(0))` is `0`, `toInt(re(0))` is `-1` etc..
    */
-  let toInt = n => - n.octave * 7 - pureToInt(n.note);
+  let toInt = n => - (n.octave * 7 + pureToInt(n.note));
+
+  let ofInt = n => {
+    let n = -n;
+    let octave = n / 7;
+    let note = pureOfInt(n mod 7);
+    { note, octave }
+  };
 
   /**
    * Gives the distance between two notes.
@@ -64,6 +84,17 @@ module Note = {
   let compare = (a: t, b: t) => {
     toInt(a) - toInt(b);
   };
+
+  let randomBetween = {
+    Random.self_init();
+    (noteA, noteB) => {
+    let iA = toInt(noteA);
+    let iB = toInt(noteB);
+    let range = iA - iB;
+    let r = Random.int(range + 1);
+    ofInt(iB + r)
+  }
+}
 };
 
 module Clef = {

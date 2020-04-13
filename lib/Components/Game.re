@@ -63,8 +63,8 @@ let spacing = (width, height) => 3. *. widthNote(width, height);
 let makeInitialState = (~width, ~height, ~spacing, ~randomNote, ()) => {
   open Drawing;
   let randomNote = {
-    let note = randomNote();
     i => {
+      let note = randomNote();
       let x = Float.of_int(i) *. spacing +. width;
       (x, note);
     };
@@ -89,7 +89,7 @@ let refresh = (~xClef, ~xLimit, ~spacing, ~randomNote, ~elapsed, state) => {
     | [] =>
       let newX = lastX +. spacing;
       [
-        (newX, randomNote()),
+        (newX, randomNote ()),
         ...shiftAndProduce(~lastX=newX, ~toCreate=toCreate - 1, []),
       ];
     | [(x, n), ...rest] =>
@@ -142,9 +142,12 @@ let%component make =
     Drawing.(StaffContext.xClef(StaffContext.dummy(~width, ~height)));
   };
 
+  let min = Solfege.Note.do_(4);
+  let max = Solfege.Note.do_(5);
+
   let xLimit = xLimit(width, height);
   let spacing = spacing(width, height);
-  let randomNote = () => fst(Solfege.Clef.noteOnLine(clef));
+  let randomNote = () => Solfege.Note.randomBetween(min, max);
   let reducer = reducer(~xClef, ~xLimit, ~spacing, ~randomNote);
 
   let initialState =

@@ -23,4 +23,11 @@ describe("Solfege", ({test, _}) => {
     let r = compare(re(2), mi(2));
     expect.int(r).toBe(1);
   });
+
+  test("ofInt should be the inverse of toInt", ({expect, _}) => {
+    open Solfege.Note;
+    for (i in -70 to 0) {
+      expect.int(toInt(ofInt(i))).toBe(i);
+    }
+  })
 });
