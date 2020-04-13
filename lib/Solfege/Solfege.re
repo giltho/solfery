@@ -36,9 +36,9 @@ module Note = {
     | 4 => Sol
     | 5 => La
     | 6 => Si
-    | _ => raise(Invalid_argument("Invalid int for pure note"));
-    }
-  }
+    | _ => raise(Invalid_argument("Invalid int for pure note"))
+    };
+  };
 
   type t = {
     note: pure,
@@ -68,10 +68,10 @@ module Note = {
   let toInt = n => - (n.octave * 7 + pureToInt(n.note));
 
   let ofInt = n => {
-    let n = -n;
+    let n = - n;
     let octave = n / 7;
     let note = pureOfInt(n mod 7);
-    { note, octave }
+    {note, octave};
   };
 
   /**
@@ -88,13 +88,13 @@ module Note = {
   let randomBetween = {
     Random.self_init();
     (noteA, noteB) => {
-    let iA = toInt(noteA);
-    let iB = toInt(noteB);
-    let range = iA - iB;
-    let r = Random.int(range + 1);
-    ofInt(iB + r)
-  }
-}
+      let iA = toInt(noteA);
+      let iB = toInt(noteB);
+      let range = iA - iB;
+      let r = Random.int(range + 1);
+      ofInt(iB + r);
+    };
+  };
 };
 
 module Clef = {

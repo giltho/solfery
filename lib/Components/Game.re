@@ -4,7 +4,7 @@ open Revery.UI;
 module State = {
   type t = {
     notes: list((float, Solfege.Note.t)), /* Circular queue */
-    target: int, /* Target */
+    target: int /* Target */
   };
 
   let make = (~notes, ~target) => {
@@ -62,12 +62,10 @@ let spacing = (width, height) => 3. *. widthNote(width, height);
 
 let makeInitialState = (~width, ~height, ~spacing, ~randomNote, ()) => {
   open Drawing;
-  let randomNote = {
-    i => {
-      let note = randomNote();
-      let x = Float.of_int(i) *. spacing +. width;
-      (x, note);
-    };
+  let randomNote = i => {
+    let note = randomNote();
+    let x = Float.of_int(i) *. spacing +. width;
+    (x, note);
   };
   let usableWidth =
     width -. StaffContext.xClef(StaffContext.dummy(~width, ~height));
@@ -89,7 +87,7 @@ let refresh = (~xClef, ~xLimit, ~spacing, ~randomNote, ~elapsed, state) => {
     | [] =>
       let newX = lastX +. spacing;
       [
-        (newX, randomNote ()),
+        (newX, randomNote()),
         ...shiftAndProduce(~lastX=newX, ~toCreate=toCreate - 1, []),
       ];
     | [(x, n), ...rest] =>
@@ -107,8 +105,8 @@ let refresh = (~xClef, ~xLimit, ~spacing, ~randomNote, ~elapsed, state) => {
 let reducer = (~xClef, ~xLimit, ~spacing, ~randomNote, action, state) => {
   switch (action) {
   | State.TimeTick(elapsed) =>
-      refresh(~xClef, ~xLimit, ~spacing, ~randomNote, ~elapsed, state);
-  }
+    refresh(~xClef, ~xLimit, ~spacing, ~randomNote, ~elapsed, state)
+  };
 };
 
 let gameNotesOfState =
@@ -156,10 +154,7 @@ let%component make =
   let%hook (state, dispatch) = Hooks.reducer(~initialState, reducer);
 
   let _dispose =
-    Revery.Tick.interval(
-      t => dispatch(State.TimeTick(t)),
-      Time.zero,
-    );
+    Revery.Tick.interval(t => dispatch(State.TimeTick(t)), Time.zero);
 
   <Staff width height clef style>
     {React.listToElement(

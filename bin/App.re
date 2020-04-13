@@ -24,9 +24,7 @@ let main = () => {
     let staff = [paddingVertical(10)];
   };
   Components.(
-    <View style=Styles.container>
-      <Game style=Styles.staff />
-    </View>
+    <View style=Styles.container> <Game style=Styles.staff /> </View>
   );
 };
 
