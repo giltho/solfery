@@ -8,6 +8,7 @@ type t = {
   scale: float,
   x: float,
   color: Skia.Color.t,
+  opacity: float,
 };
 
 let shouldDrawLineUntil = (notehead: t) => {
@@ -36,7 +37,8 @@ let lineRect = (notehead: t, n: int, sc: StaffContext.t) => {
 
 let drawLines = (notehead, sc) => {
   let paint = Skia.Paint.make();
-  Skia.Paint.setColor(paint, Coloring.black);
+  Skia.Paint.setColor(paint, notehead.color);
+  Skia.Paint.setAlpha(paint, notehead.opacity);
   switch (shouldDrawLineUntil(notehead)) {
   | `Dont => ()
   | `Up(l) =>
@@ -71,6 +73,7 @@ let draw = (notehead, sc) => {
     StaffContext.lineSpacing(sc) *. notehead.scale,
   );
   Skia.Paint.setColor(paint, notehead.color);
+  Skia.Paint.setAlpha(paint, notehead.opacity);
   let y = centerY(notehead, sc);
   StaffContext.Draw.drawText(
     ~paint,
@@ -81,9 +84,9 @@ let draw = (notehead, sc) => {
   );
 };
 
-let make = (~clef, ~note, ~x, ~color=Coloring.black, ()) => {
+let make = (~clef, ~note, ~x, ~color=Coloring.black, ~opacity=1., ()) => {
   let scale = 4.;
-  let content = {glyph: Glyphs.noteheadBlack, note, clef, x, scale, color};
+  let content = {glyph: Glyphs.noteheadBlack, note, clef, x, scale, opacity, color};
   let draw = draw(content);
   {Drawable.content, draw};
 };

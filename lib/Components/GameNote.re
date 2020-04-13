@@ -12,13 +12,11 @@ let make =
       ~focus=false,
       (),
     ) => {
-  <Revery.UI.Opacity opacity>
     <Canvas
       width
       height
       render={draw => {
-        draw(GameNote.make(~note, ~color, ~focus, ~clef, ~x, ()))
+        draw(GameNote.make(~opacity, ~note, ~color, ~focus, ~clef, ~x, ()))
       }}
     />
-  </Revery.UI.Opacity>;
 };

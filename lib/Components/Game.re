@@ -84,7 +84,6 @@ module Button = {
         alignItems(`Center),
         flexGrow(1),
         height(int_of_float(h)),
-        /* Min width */
         margin(10),
       ];
     let viewStyle =
@@ -163,8 +162,8 @@ module KeyboardInput = {
   };
 };
 
-let computeOpacity = (~xClef: float, ~xLimit: float, x) =>
-  max(0., min(1., (x -. xClef) /. (xLimit -. xClef)));
+let computeOpacity = (~xEndClef: float, ~xLimit: float, x) =>
+  max(0., min(1., (x -. xEndClef) /. (xLimit -. xEndClef)));
 
 let glyphWidth = (width, height, glyph) => {
   open Drawing;
@@ -259,10 +258,11 @@ let reducer = (~xClef, ~xLimit, ~spacing, ~randomNote, action, state) => {
 };
 
 let gameNotesOfState =
-    (~width, ~height, ~clef, ~xClef, ~xLimit, state: State.t) => {
+    (~width, ~height, ~clef, ~xEndClef, ~xLimit, state: State.t) => {
   List.mapi(
     (i, (x, note, guess)) => {
       let color = if (guess === State.Incorrect) { Drawing.Coloring.red } else { Drawing.Coloring.black };
+      let opacity = computeOpacity(~xEndClef, ~xLimit, x);
       <GameNote
         width
         height
@@ -271,7 +271,7 @@ let gameNotesOfState =
         x
         focus={i === state.target}
         color
-        opacity={computeOpacity(~xClef, ~xLimit, x)}
+        opacity
       />
     },
     state.notes,
@@ -286,12 +286,15 @@ let%component make =
                 ~style=Style.emptyViewStyle,
                 (),
               ) => {
-  let xClef = {
-    Drawing.(
+  let (xClef, xEndClef) = {
+    open Drawing;
+    let sc = StaffContext.dummy(~width=totalWidth, ~height=totalWidth);
+    let xClef =
       StaffContext.xClef(
-        StaffContext.dummy(~width=totalWidth, ~height=totalWidth),
-      )
-    );
+        sc
+      );
+    let w = glyphWidth(totalWidth, totalHeight, Glyphs.gClef);
+    (xClef, xClef +. w)
   };
 
   let min = Solfege.Note.do_(4);
@@ -315,6 +318,7 @@ let%component make =
 
   let _dispose =
     Revery.Tick.interval(t => dispatch(State.TimeTick(t)), Time.zero);
+
   <View style>
     <KeyboardInput dispatch />
     <Staff width=totalWidth height=totalHeight clef>
@@ -323,7 +327,7 @@ let%component make =
            ~width=totalWidth,
            ~height=totalHeight,
            ~clef,
-           ~xClef,
+           ~xEndClef,
            ~xLimit,
            state,
          ),
