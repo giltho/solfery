@@ -141,7 +141,7 @@ let%component make =
   };
 
   let min = Solfege.Note.do_(4);
-  let max = Solfege.Note.do_(5);
+  let max = Solfege.Note.do_(6);
 
   let xLimit = xLimit(width, height);
   let spacing = spacing(width, height);

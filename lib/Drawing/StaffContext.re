@@ -76,6 +76,11 @@ let lineSpacing = context =>
 let nthLineY = (context: t, n: int) =>
   float_of_int(n) *. lineSpacing(context);
 
+let lineOfVisibleLineUnsafe = (n: int) => {
+  /** TODO: This should be computed from nLineSpace */
+  n + 4
+}
+
 let lineOfVisibleLine = (n: int) => {
   if (n < 0 || n > 4) {
     raise(
@@ -86,7 +91,7 @@ let lineOfVisibleLine = (n: int) => {
       ),
     );
   };
-  /** This should be computed from nLineSpace */ n + 4;
+  lineOfVisibleLineUnsafe(n);
 };
 
 let nthVisibleLineY = (context: t, n: int) =>

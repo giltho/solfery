@@ -19,6 +19,8 @@ let xClef : t => float;
 
 let nthLineY : (t,  int) => float;
 
+let lineOfVisibleLineUnsafe : int => int;
+
 let lineOfVisibleLine : int => int;
 
 let nthVisibleLineY : (t, int) => float;
