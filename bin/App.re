@@ -25,15 +25,7 @@ let main = () => {
   };
   Components.(
     <View style=Styles.container>
-      <Staff style=Styles.staff>
-        <GameNote
-          note={Solfege.Note.sol(4)}
-          x=200.
-          focus=true
-          color=Drawing.Coloring.red
-          opacity=0.
-        />
-      </Staff>
+      <Game style=Styles.staff />
     </View>
   );
 };

@@ -1,9 +1,10 @@
+open Revery;
 open Revery.UI;
 
 module State = {
   type t = {
     notes: list((float, Solfege.Note.t)), /* Circular queue */
-    target: int /* Target */
+    target: int, /* Target */
   };
 
   let make = (~notes, ~target) => {
@@ -19,7 +20,7 @@ module State = {
   };
 
   type action =
-    | TimeTick;
+    | TimeTick(Time.t);
 };
 
 let computeOpacity = (~xClef: float, ~xLimit: float, x) =>
@@ -75,10 +76,13 @@ let makeInitialState = (~width, ~height, ~spacing, ~randomNote, ()) => {
   State.make(~notes, ~target=0);
 };
 
-let reduceOnTick = (~xClef, ~xLimit, ~spacing, ~randomNote, state) => {
+let refresh = (~xClef, ~xLimit, ~spacing, ~randomNote, ~elapsed, state) => {
   let (xTarget, _) = State.getTarget(state);
-  let vFactor = 1. /. 20.;
-  let xMove = max(0., vFactor *. (xTarget -. xLimit));
+  let sElapsed = Time.toFloatSeconds(elapsed);
+  let vFactor = 1. /. 1000.;
+
+  let xMoveFor25FPS = max(0., (vFactor *. (xTarget -. xLimit)) ** 2.);
+  let xMove = xMoveFor25FPS *. sElapsed *. 25.;
   let rec shiftAndProduce = (~lastX=0., ~toCreate=0, notes) => {
     switch (notes) {
     | [] when toCreate <= 0 => []
@@ -102,9 +106,9 @@ let reduceOnTick = (~xClef, ~xLimit, ~spacing, ~randomNote, state) => {
 
 let reducer = (~xClef, ~xLimit, ~spacing, ~randomNote, action, state) => {
   switch (action) {
-  | State.TimeTick =>
-    reduceOnTick(~xClef, ~xLimit, ~spacing, ~randomNote, state)
-  };
+  | State.TimeTick(elapsed) =>
+      refresh(~xClef, ~xLimit, ~spacing, ~randomNote, ~elapsed, state);
+  }
 };
 
 let gameNotesOfState =
@@ -150,8 +154,8 @@ let%component make =
 
   let _dispose =
     Revery.Tick.interval(
-      _ => dispatch(State.TimeTick),
-      Revery.Time.ofFloatSeconds(0.001),
+      t => dispatch(State.TimeTick(t)),
+      Time.zero,
     );
 
   <Staff width height clef style>

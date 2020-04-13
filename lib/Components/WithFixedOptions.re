@@ -23,7 +23,7 @@ module Make = (O: OPTIONS) => {
     let make = Staff.make(~height, ~width, ~clef);
   };
 
-  module LinearGame = {
-    let make = LinearGame.make(~height, ~width, ~clef);
+  module Game = {
+    let make = Game.make(~height, ~width, ~clef);
   }
 };
