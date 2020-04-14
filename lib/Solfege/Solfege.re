@@ -15,8 +15,8 @@ module Note = {
     | /** B */
       Si;
 
-  let pureToString = (p) => {
-    switch(p) {
+  let pureToString = p => {
+    switch (p) {
     | Do => "Do"
     | Re => "Re"
     | Mi => "Mi"
@@ -24,8 +24,8 @@ module Note = {
     | Sol => "Sol"
     | La => "La"
     | Si => "Si"
-    }
-  }
+    };
+  };
 
   let pureToInt = n => {
     switch (n) {

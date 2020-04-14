@@ -26,7 +26,8 @@ let draw = (gn: t, sc) => {
   gn.note.draw(sc);
 };
 
-let make = (~clef, ~note, ~x, ~color=Coloring.black, ~focus=false, ~opacity=1.,  ()) => {
+let make =
+    (~clef, ~note, ~x, ~color=Coloring.black, ~focus=false, ~opacity=1., ()) => {
   let note = Note.make(~clef, ~note, ~x, ~color, ~opacity, ());
   let content = {note, focus};
   let draw = draw(content);

@@ -12,11 +12,11 @@ let make =
       ~focus=false,
       (),
     ) => {
-    <Canvas
-      width
-      height
-      render={draw => {
-        draw(GameNote.make(~opacity, ~note, ~color, ~focus, ~clef, ~x, ()))
-      }}
-    />
+  <Canvas
+    width
+    height
+    render={draw => {
+      draw(GameNote.make(~opacity, ~note, ~color, ~focus, ~clef, ~x, ()))
+    }}
+  />;
 };

@@ -86,7 +86,15 @@ let draw = (notehead, sc) => {
 
 let make = (~clef, ~note, ~x, ~color=Coloring.black, ~opacity=1., ()) => {
   let scale = 4.;
-  let content = {glyph: Glyphs.noteheadBlack, note, clef, x, scale, opacity, color};
+  let content = {
+    glyph: Glyphs.noteheadBlack,
+    note,
+    clef,
+    x,
+    scale,
+    opacity,
+    color,
+  };
   let draw = draw(content);
   {Drawable.content, draw};
 };

@@ -5,11 +5,10 @@ type t = {
   opacity: float,
 };
 
-let stemWidth = (sc) => {
+let stemWidth = sc => {
   /* For 200px staff height, it should be 2 pixels wide */
   StaffContext.height(sc) /. 100.;
-
-} 
+};
 
 let rectOfStemDown = (stem, x, y, sc) => {
   let nw = Glyphs.Coord.getStemDownNW(stem.head.glyph.name);

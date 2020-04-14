@@ -24,6 +24,6 @@ module Make = (O: OPTIONS) => {
   };
 
   module Game = {
-    let make = Game.make(~height, ~width, ~clef);
+    let make = Game.make(~height, ~width);
   };
 };
