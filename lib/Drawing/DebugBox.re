@@ -7,10 +7,6 @@ type t = {
   color: Skia.Color.t,
 };
 
-let make = (~x, ~y, ~rad, ~color=Coloring.blue, ()) => {
-  {x, y, rad, color};
-};
-
 let draw = (db, sc) => {
   let xStart = db.x -. db.rad;
   let xEnd = db.x +. db.rad;
@@ -22,7 +18,13 @@ let draw = (db, sc) => {
   StaffContext.Draw.drawRect(~rect, ~paint, sc);
 };
 
+let make = (~x, ~y, ~rad, ~color=Coloring.blue, ()) => {
+  let content = {x, y, rad, color};
+  Drawable.make(content, draw);
+};
+
+
 let makeAndDraw = (~x, ~y, ~rad, ~color=Coloring.blue, sc) => {
   let db = make(~x, ~y, ~rad, ~color, ());
-  draw(db, sc);
+  Drawable.draw(sc, db);
 };

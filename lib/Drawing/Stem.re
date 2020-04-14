@@ -49,5 +49,5 @@ let make = (~head: NoteHead.t, ~color=Coloring.black, ~opacity=1., ()) => {
   let direction = `Up;
   /** We'll decide later */
   let content = {head, direction, color, opacity};
-  {Drawable.content, draw: draw(content)};
+  Drawable.make(content, draw);
 };

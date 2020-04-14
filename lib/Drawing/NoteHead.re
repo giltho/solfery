@@ -95,6 +95,5 @@ let make = (~clef, ~note, ~x, ~color=Coloring.black, ~opacity=1., ()) => {
     opacity,
     color,
   };
-  let draw = draw(content);
-  {Drawable.content, draw};
+  Drawable.make(content, draw);
 };
