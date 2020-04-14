@@ -1,3 +1,4 @@
+open Solfery.Components;
 open Revery;
 open Revery.UI;
 
@@ -374,7 +375,7 @@ let gameNotesOfState =
           Drawing.Coloring.black;
         };
       let opacity = computeOpacity(~xEndClef, ~xLimit, x);
-      <GameNote
+      <DecoratedNote
         width
         height
         clef

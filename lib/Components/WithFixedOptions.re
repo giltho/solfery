@@ -15,15 +15,11 @@ module Make = (O: OPTIONS) => {
     let make = Note.make(~height, ~width, ~clef);
   };
 
-  module GameNote = {
-    let make = GameNote.make(~height, ~width, ~clef);
+  module DecoratedNote = {
+    let make = DecoratedNote.make(~height, ~width, ~clef);
   };
 
   module Staff = {
     let make = Staff.make(~height, ~width, ~clef);
-  };
-
-  module Game = {
-    let make = Game.make(~height, ~width);
   };
 };

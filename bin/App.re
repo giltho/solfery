@@ -1,6 +1,5 @@
 open Revery;
 open Revery.UI;
-open Solfery.Components;
 
 let main = () => {
   module Styles = {
