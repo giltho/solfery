@@ -17,16 +17,27 @@ let main = () => {
 
     let staff = [paddingVertical(10)];
   };
-    <View style=Styles.container>
-      <Game
-        style=Styles.staff
-        height=200.
-        width=800.
-        params=(Game.Params.Duo(
-          {clef:Treble, rangeMin:Solfege.Note.do_(4), rangeMax:Solfege.Note.do_(5)},
-          {clef:Bass, rangeMin:Solfege.Note.si(2), rangeMax:Solfege.Note.si(3)}))
-      />
-    </View>
+  <View style=Styles.container>
+    <Game
+      style=Styles.staff
+      height=200.
+      width=800.
+      params={
+        Game.Params.Duo(
+          {
+            clef: Treble,
+            rangeMin: Solfege.Note.do_(4),
+            rangeMax: Solfege.Note.do_(5),
+          },
+          {
+            clef: Bass,
+            rangeMin: Solfege.Note.si(2),
+            rangeMax: Solfege.Note.si(3),
+          },
+        )
+      }
+    />
+  </View>;
 };
 
 let init = app => {

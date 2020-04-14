@@ -14,6 +14,33 @@ module Params = {
     | Duo(single, single);
 };
 
+module Limit = {
+  open Drawing;
+  type t = float; /* x */
+  let draw = (r, sc) => {
+    /* For a total height of 200px we want it to be 2px wide  */
+    let b = StaffContext.height(sc);
+    let width = b /. 100.;
+    let l = r -. width;
+    let t = 0.;
+    let rect = Skia.Rect.makeLtrb(l, t, r, b);
+    let paint = Skia.Paint.make();
+    Skia.Paint.setColor(paint, Coloring.grey);
+    StaffContext.Draw.drawRect(~paint, ~rect, sc);
+  };
+
+  let makeDrawable = x => {
+    Drawable.make(x, draw);
+  };
+
+  let make = (~width, ~height, ~x, ()) =>
+    <Solfery.Components.Canvas
+      width
+      height
+      render={draw => draw(makeDrawable(x))}
+    />;
+};
+
 module Row = {
   let make = (~children, ~width as w, ~height as h, ()) => {
     let style =
@@ -321,7 +348,12 @@ let refresh =
           Up;
         };
       let newState =
-        shiftAndProduce(~lastX=newX, ~toCreate=toCreate - 1, ~lastStaff=newStaff, state);
+        shiftAndProduce(
+          ~lastX=newX,
+          ~toCreate=toCreate - 1,
+          ~lastStaff=newStaff,
+          state,
+        );
       {
         ...state,
         notes: [
@@ -339,7 +371,12 @@ let refresh =
         );
       } else {
         let restState =
-          shiftAndProduce(~lastX=x, ~toCreate, ~lastStaff=s, {...state, notes: rest});
+          shiftAndProduce(
+            ~lastX=x,
+            ~toCreate,
+            ~lastStaff=s,
+            {...state, notes: rest},
+          );
         {...restState, notes: [(x, n, s, g), ...restState.notes]};
       }
     };
@@ -453,6 +490,7 @@ let%component make =
     switch (params) {
     | Single(p) =>
       <Staff width=totalWidth height=totalHeight clef={p.clef}>
+        <Limit width=totalWidth height=totalHeight x=xLimit />
         {React.listToElement(
            gameNotesOfState(
              ~width=totalWidth,
@@ -469,6 +507,7 @@ let%component make =
       React.listToElement(
         <>
           <Staff width=totalWidth height=totalHeight clef={p1.clef}>
+            <Limit width=totalWidth height=totalHeight x=xLimit />
             {React.listToElement(
                gameNotesOfState(
                  ~width=totalWidth,
@@ -481,6 +520,7 @@ let%component make =
              )}
           </Staff>
           <Staff width=totalWidth height=totalHeight clef={p2.clef}>
+            <Limit width=totalWidth height=totalHeight x=xLimit />
             {React.listToElement(
                gameNotesOfState(
                  ~width=totalWidth,
@@ -498,7 +538,7 @@ let%component make =
 
   <View style>
     <KeyboardInput dispatch />
-    { staves }
+    staves
     <Row width=totalWidth height=totalHeight>
       {React.listToElement(
          List.map(

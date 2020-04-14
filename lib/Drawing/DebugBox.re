@@ -23,7 +23,6 @@ let make = (~x, ~y, ~rad, ~color=Coloring.blue, ()) => {
   Drawable.make(content, draw);
 };
 
-
 let makeAndDraw = (~x, ~y, ~rad, ~color=Coloring.blue, sc) => {
   let db = make(~x, ~y, ~rad, ~color, ());
   Drawable.draw(sc, db);

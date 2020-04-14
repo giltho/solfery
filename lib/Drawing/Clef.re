@@ -32,5 +32,5 @@ let glyphAndScaleOfClef = (clef: Solfege.Clef.t) => {
 let make = (~clef: Solfege.Clef.t, ~x: float) => {
   let (glyph, scale) = glyphAndScaleOfClef(clef);
   let content = {glyph, clef, x, scale};
-  Drawable.make (content, draw);
+  Drawable.make(content, draw);
 };

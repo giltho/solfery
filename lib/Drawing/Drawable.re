@@ -5,4 +5,4 @@ type t('a) = {
 
 let draw = (cs, x) => x.draw(cs);
 
-let make = (x, draw) => { content: x, draw: draw(x) }
+let make = (x, draw) => {content: x, draw: draw(x)};
